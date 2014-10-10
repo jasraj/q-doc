@@ -1,0 +1,66 @@
+{{!-- q-doc Code Documentation Generator --}}
+{{!--  Handlebars Template for Documentation --}}
+{{!-- Copyright (C) 2014 Jaskirat M.S. Rajasansir --}}
+{{!-- License BSD, see LICENSE for details --}}
+
+{{#qdoc}}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title"><a name="{{id}}"><tt>{{func}}{{arguments}}</tt></a></h3>
+    </div>
+
+    {{#if comments}}
+    <div class="panel-body">
+        <p>{{comments}}</p>
+
+        {{#if param}}
+        <p>
+            <strong>Parameters:</strong>
+        </p>
+
+        <ul style="list-style-type: none">
+            {{#param}}
+                <li>
+                    <tt>{{name}}</tt> : <em>{{types}}</em>
+                    {{#if description}}
+                    <ul>
+                        <li>{{description}}</li>
+                    </ul>
+                    {{/if}}
+                </li>
+            {{/param}}
+        </ul>
+        {{/if}}
+
+        {{#if returns.types}}
+        <p>
+            <strong>Returns:</strong>
+        </p>
+
+        <ul style="list-style-type: none">
+            <li>
+                <em>{{returns.types}}</em>
+                {{#if returns.description}}
+                <ul> 
+                    <li>{{returns.description}}</li>
+                </ul>
+                {{/if}}
+            </li>
+        </ul>
+        {{/if}}
+
+        {{#if throws}}
+        <p>
+            <strong>Throws:</strong>
+        </p>
+
+        <ul style="list-style-type: none">
+            {{#throws}}
+                <li><tt>{{exception}}</tt> : {{description}}</li>
+            {{/throws}}
+        </ul>
+        {{/if}}
+    </div>
+    {{/if}}
+</div>
+{{/qdoc}}

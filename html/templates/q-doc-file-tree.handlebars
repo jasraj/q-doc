@@ -1,0 +1,14 @@
+{{!-- q-doc Code Documentation Generator --}}
+{{!--  Handlebars Template for File Tree --}}
+{{!-- Copyright (C) 2014 Jaskirat M.S. Rajasansir --}}
+{{!-- License BSD, see LICENSE for details --}}
+
+<div class="list-group" id="q-doc-file-tree-group">
+{{#files}}
+    <a href="{{link}}" id="{{id}}" class="list-group-item">
+        <span class="badge">{{funcCount}}</span>
+        <tt><small><strong>{{file}}</strong></small></tt>
+    </a>
+{{/files}}
+</ul>
+
