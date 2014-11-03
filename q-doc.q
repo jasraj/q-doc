@@ -3,6 +3,8 @@
 // Copyright (C) 2014 Jaskirat M.S. Rajasansir
 // License BSD, see LICENSE for details
 
+/ The root folder that the q-doc functionality resides in. This will be set on boot.
+/  @see .qdoc.init
 .qdoc.cfg.baseFolder:`;
 
 .qdoc.init:{
@@ -33,6 +35,9 @@
 	.log.info "To initialise the parser, run .qdoc.parser.init with the folder root of your code.\n";
  };
 
+/ Get the current working directory, dependent on the Operating System the process is started on.
+/ NOTE: Only Windows and Linux are currently supported.
+/  @returns (FolderPath) The current working directory
 .qdoc.getCwd:{
 	if["w"~first string .z.o;
 		:hsym first `$trim system "echo %cd%";
@@ -45,10 +50,11 @@
 	'nyi;
  };
 
+/ Simple wrapper around .util.require to load the specified library from the current working directory
+/  @param lib (Symbol) The library to load
 .qdoc.require:{[lib]
 	:.util.require[lib;.qdoc.cfg.baseFolder];
  };
-
 
 
 .qdoc.init[];
