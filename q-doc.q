@@ -27,17 +27,19 @@
 	.h.tx[`jsn]:{ enlist .j.j x };
 	.h.ty[`jsn]:"application/json";
 
-	if[not .util.isListening[];
-		.log.warn "This process is not bound to any port. Please restart the process with the '-p' flag or use '\\p'.";
+	$[.util.isListening[];
+		.log.info "Process is listening on port ",string system "p";
+		.log.warn "This process is not bound to any port. Please restart the process with the '-p' flag or use '\\p'."
 	];
 
 	-1 "";
-	.log.info "To initialise the parser, run .qdoc.parser.init with the folder root of your code.\n";
+	.log.info "To initialise the parser, run .qdoc.parser.init `:/path/to/code/folder/root\n";
  };
 
 / Get the current working directory, dependent on the Operating System the process is started on.
 / NOTE: Only Windows and Linux are currently supported.
 /  @returns (FolderPath) The current working directory
+/  @throws GetCwdNotImplementedException If the operating system is not yet supported
 .qdoc.getCwd:{
 	if["w"~first string .z.o;
 		:hsym first `$trim system "echo %cd%";
@@ -47,7 +49,7 @@
 		:hsym first `$trim system "pwd";
 	];
 
-	'nyi;
+	'"GetCwdNotImplementedException (",string[.z.o],")";
  };
 
 / Simple wrapper around .util.require to load the specified library from the current working directory
