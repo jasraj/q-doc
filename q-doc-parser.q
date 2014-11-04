@@ -64,6 +64,7 @@
 /  @param fileName File The file to parse for q-doc
 /  @returns Boolean True if the parse was successful
 /  @see .qdoc.parseTree.parseTags
+/  @see .qdoc.parser.postProcess
 .qdoc.parser.parse:{[fileName]
     .log.info "Generating q-doc parse tree for: ",string fileName;
 
@@ -80,6 +81,15 @@
     tagComments:commentsDict@'tagDiscovery;
     comments:commentsDict@'(til each count each commentsDict) except' raze each tagDiscovery;
     comments:comments@'where each not "/"~/:/:first@/:/:comments;
+    
+    / Key of funcAndArgs / comments / tagComments are equal and must remain equal
+    keysToRemove:.qdoc.parser.postProcess[funcAndArgs;comments;tagComments];
+
+    .log.info "Documented objects to be ignored: ",.Q.s1 keysToRemove;
+
+    funcAndArgs:keysToRemove _ funcAndArgs;
+    comments:keysToRemove _ comments;
+    tagComments:keysToRemove _ tagComments;
 
     tagParseTree:raze .qdoc.parser.parseTags[;tagComments] each key tagComments;
     
@@ -106,6 +116,26 @@
 
     :enlist[func]!enlist key[parseDict]!parsed;
  };
+
+/ Performs post-processing on the generated function and arguments, comments and
+/ parsed tags as appropriate.
+/ Currently this function removes documented objects with any function to the left of the assigment
+/ and removes additions to dictionaries if there are no comments associated with them.
+/  @param funcAndArgs (Dict) Functions with argument list
+/  @param comments (Dict) Functions with description
+/  @param tagComments (Dict) Functions with tag parsing
+/  @returns (SymbolList) Functions that should be removed from the parsed results
+.qdoc.parser.postProcess:{[funcAndArgs;comments;tagComments]
+    / Remove documented objects with any function to the left of the assignment
+    assignmentInFunc:key[funcAndArgs] where any each any each string[key funcAndArgs] in/:\:",@_:";
+
+    / Remove additions to dictionaries if no comments
+    dictKeysNoComments:{ $[(any any string[x] in/:\:"[]") & (()~y); :x; :` ] }./:flip (key;value)@\:comments;
+    dictKeysNoComments@:where not null dictKeysNoComments;
+
+    :distinct (,/)(assignmentInFunc;dictKeysNoComments);
+ };
+
 
 .qdoc.parser.tag.param:{[func;params]
     pDict:flip `name`types`description!"S**"$\:();
