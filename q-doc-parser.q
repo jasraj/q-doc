@@ -85,11 +85,13 @@
     / Key of funcAndArgs / comments / tagComments are equal and must remain equal
     keysToRemove:.qdoc.parser.postProcess[funcAndArgs;comments;tagComments];
 
-    .log.info "Documented objects to be ignored: ",.Q.s1 keysToRemove;
+    if[not .util.isEmpty keysToRemove;
+        .log.info "Documented objects to be ignored: ",.Q.s1 keysToRemove;
 
-    funcAndArgs:keysToRemove _ funcAndArgs;
-    comments:keysToRemove _ comments;
-    tagComments:keysToRemove _ tagComments;
+        funcAndArgs:keysToRemove _ funcAndArgs;
+        comments:keysToRemove _ comments;
+        tagComments:keysToRemove _ tagComments;
+    ];
 
     tagParseTree:raze .qdoc.parser.parseTags[;tagComments] each key tagComments;
     
