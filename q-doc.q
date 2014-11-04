@@ -8,6 +8,8 @@
 .qdoc.cfg.baseFolder:`;
 
 .qdoc.init:{
+	system "c 100 500";
+
 	-1 "*****";
 	-1 "q-doc Code Documentation Generator";
 	-1 "Copyright (C) 2014 Jaskirat M.S. Rajasansir";
