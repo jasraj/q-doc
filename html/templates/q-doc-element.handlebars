@@ -9,9 +9,10 @@
         <h3 class="panel-title"><a name="{{id}}"><tt>{{func}}{{arguments}}</tt></a></h3>
     </div>
 
-    {{#if comments}}
     <div class="panel-body">
+        {{#if comments}}
         <p>{{comments}}</p>
+        {{/if}}
 
         {{#if param}}
         <p>
@@ -61,6 +62,5 @@
         </ul>
         {{/if}}
     </div>
-    {{/if}}
 </div>
 {{/qdoc}}
