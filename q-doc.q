@@ -12,7 +12,7 @@
 
 	-1 "*****";
 	-1 "q-doc Code Documentation Generator";
-	-1 "Copyright (C) 2014 Jaskirat M.S. Rajasansir";
+	-1 "Copyright (C) 2014 - 2015 Jaskirat M.S. Rajasansir";
 	-1 "License BSD, see LICENSE for details";
 	-1 "*****\n";
 
@@ -20,7 +20,10 @@
 
 	system "l util.q";
 
-	.qdoc.require `json;
+    if[not `j in key`;
+        .qdoc.require `json;
+    ];
+
 	.qdoc.require `$"q-doc-config";
 	.qdoc.require `$"q-doc-generator";
 	.qdoc.require `$"q-doc-parser";
