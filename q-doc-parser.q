@@ -69,12 +69,19 @@
     .log.info "Generating q-doc parse tree for: ",string fileName;
 
     file:read0 fileName;
-    file@:where not in [;(" ";"\t")] first each file;
+    file@:where not in [;(" ";"\t";"}")] first each file;
 
     funcSignatures:file where not "/"~/:first each file;
     funcAndArgs:{ $[not "{["~2#x; :enlist`; :`$";" vs x where not any x in/:"{[]} "] } each (!). flip ({`$first x};last)@\:/:":" vs/:funcSignatures;
 
-    commentsDict:key[funcAndArgs]!trim over reverse each 1_/:file (file?funcSignatures) - til each deltas file?funcSignatures;
+    commentLines:(file?funcSignatures) - til each deltas file?funcSignatures;
+   
+    / Deltas stops at 1 so first line of file gets ignored. If its a comment, manually add to list
+    if["/"~first first file;
+        commentLines:@[commentLines;0;,;0];
+    ];
+
+    commentsDict:key[funcAndArgs]!trim over reverse each 1_/:file commentLines;
     commentsDict:trim 1_/:/:commentsDict;
 
     tagDiscovery:{ key[.qdoc.parser.tags]!where each like[x;]@/:"*",/:key[.qdoc.parser.tags],\:"*" } each commentsDict;
