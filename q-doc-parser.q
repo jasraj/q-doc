@@ -142,7 +142,10 @@
     dictKeysNoComments:{ $[(any any string[x] in/:\:"[]") & (()~y); :x; :` ] }./:flip (key;value)@\:comments;
     dictKeysNoComments@:where not null dictKeysNoComments;
 
-    :distinct (,/)(assignmentInFunc;dictKeysNoComments);
+    / Remove any functions that are executed in the root of q-script
+    nonDeclaredFuncs:key[funcAndArgs] where any "`;" in/:\:string key funcAndArgs;
+
+    :distinct (,/)(assignmentInFunc;dictKeysNoComments;nonDeclaredFuncs);
  };
 
 
