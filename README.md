@@ -7,8 +7,6 @@ This repo provides a method of writing function comments in a machine readable w
 
 The commenting method, along with the associated parser, is known as `q-doc`.
 
-**NOTE**: The code + README are a WIP. Feel free to look around but there are still bugs and the README definitely isn't finished yet.
-
 ### Documenting Code
 
 In order to use this documentation generator, your function comments must confirm to the schema defined in this section.
