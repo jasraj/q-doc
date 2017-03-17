@@ -32,7 +32,7 @@
 / NOTE: Tag comments must reside on the the same line as the tag
 .qdoc.parser.tags:()!();
 .qdoc.parser.tags[enlist"@param"]:`.qdoc.parser.tag.param;
-.qdoc.parser.tags[("@returns";"@return")]:`.qdoc.parser.tag.returns;
+.qdoc.parser.tags[enlist"@returns"]:`.qdoc.parser.tag.returns;
 .qdoc.parser.tags[enlist"@throws"]:`.qdoc.parser.tag.throws;
 .qdoc.parser.tags[enlist"@see"]:`.qdoc.parser.tag.see;
 
