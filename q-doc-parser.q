@@ -175,7 +175,7 @@
 
     returnSplit:1_" " vs first return;
 
-    :key[rDict]!(.qdoc.parser.typeParser[func;returnSplit 0];" " sv 2_ returnSplit);
+    :key[rDict]!(.qdoc.parser.typeParser[func;returnSplit 0];" " sv 1_ returnSplit);
  };
 
 .qdoc.parser.tag.throws:{[func;throws]
