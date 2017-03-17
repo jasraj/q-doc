@@ -35,6 +35,7 @@
 .qdoc.parser.tags[enlist"@returns"]:`.qdoc.parser.tag.returns;
 .qdoc.parser.tags[enlist"@throws"]:`.qdoc.parser.tag.throws;
 .qdoc.parser.tags[enlist"@see"]:`.qdoc.parser.tag.see;
+.qdoc.parser.tags[enlist"@deprecated"]:`.qdoc.parser.tag.deprecated;
 
 / Defines equivalent tags for compatibility.
 .qdoc.parser.eqTags:()!();
@@ -202,6 +203,14 @@
     ];
 
     :"S"$first each 1_/:" " vs/:sees;
+ };
+
+.qdoc.parser.tag.deprecated:{[func;deprecated]
+    if[()~deprecated;
+        :"";
+    ];
+
+    :" "sv/:1_/:" " vs/:deprecated;
  };
 
 .qdoc.parser.typeParser:{[func;types]

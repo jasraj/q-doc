@@ -16,3 +16,6 @@ body {
   padding-left: 15px;
 }
 
+.warning {
+  color: darkRed;
+}

@@ -61,6 +61,16 @@
             {{/throws}}
         </ul>
         {{/if}}
+
+        {{#if deprecated}}
+        <p>
+            <strong class="warning">Deprecation:</strong>
+        </p>
+
+        <ul style="list-style-type: none">
+            <li>{{deprecated}}</li>
+        </ul>
+        {{/if}}
     </div>
 </div>
 {{/qdoc}}
