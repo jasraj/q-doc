@@ -199,7 +199,7 @@
 
 .qdoc.parser.tag.see:{[func;sees]
     if[()~sees;
-        :enlist`;
+        :0#`;
     ];
 
     :"S"$first each 1_/:" " vs/:sees;
@@ -207,7 +207,7 @@
 
 .qdoc.parser.tag.deprecated:{[func;deprecated]
     if[()~deprecated;
-        :"";
+        :();
     ];
 
     :" "sv/:1_/:" " vs/:deprecated;

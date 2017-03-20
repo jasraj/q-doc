@@ -14,6 +14,13 @@
         <p>{{comments}}</p>
         {{/if}}
 
+        {{#if deprecated}}
+        <p>
+            <strong class="warning">Deprecation:</strong>
+            {{deprecated}}
+        </p>
+        {{/if}}
+
         {{#if param}}
         <p>
             <strong>Parameters:</strong>
@@ -62,13 +69,17 @@
         </ul>
         {{/if}}
 
-        {{#if deprecated}}
+        {{#if see}}
         <p>
-            <strong class="warning">Deprecation:</strong>
+            <strong>See Also:</strong>
         </p>
 
-        <ul style="list-style-type: none">
-            <li>{{deprecated}}</li>
+        <ul>
+            {{#see}}
+                <li>
+                    <a href="#{{id}}"><tt>{{func}}</tt></a>
+                </li>
+            {{/see}}
         </ul>
         {{/if}}
     </div>

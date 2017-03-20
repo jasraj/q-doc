@@ -131,6 +131,13 @@ QDoc.postProcessDoc = function(docJson) {
             element.throws[tCount].description = S(element.throws[tCount].description).humanize();
         }
 
+        for(var sCount = 0; sCount < element.see.length; sCount++) {
+            element.see[sCount] = {
+                func: S(element.see[sCount]).humanize(),
+                id: QDoc.escapeChars(element.see[sCount])
+            };
+        }
+
         docJson.qdoc[dCount] = element;
     }
 
