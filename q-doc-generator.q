@@ -42,6 +42,13 @@
     :enlist[`qdoc]!enlist doc;
  };
 
+/ Gets all the file and q-doc information in a single function
+/  @see .qdoc.json.getFileList
+/  @see .qdoc.json.getQDocFor
+.qdoc.json.getAll:{
+    :enlist[`allDocs]!enlist { x,.qdoc.json.getQDocFor x`file } each .qdoc.json.getFileList[]`files;
+ };
+
 / Generates an error dictionary in case any parsing fails
 /  @param msg (String) The error message
 /  @param dict (Dict) Any related objects to help assist with debugging the issue
