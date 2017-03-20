@@ -19,14 +19,16 @@ In order to use this documentation generator, your function comments must confir
 3. A description of the function must be the first part of the comment body. It can span 1 or more lines
 4. The tags below are supported by the parser. All are optional.
    * `@param` : Describes the function's input parameters
-   * `@returns` : Describes the function's return value
+   * `@return` : Describes the function's return value
    * `@throws` : Describes each exception that can be thrown by the function
    * `@see` : Provides references to other functions that are used within the function
+   * `@deprecated` : Describes a deprecated feature
 5. Each tag expects a certain set of information to parse correctly.
    * `/  @param paramName (paramType) Param description `
-   * `/  @returns (returnType) Return description `
+   * `/  @return (returnType) Return description `
    * `/  @throws ExceptionName Exception description `
    * `/  @see Reference `
+   * `/  @deprecated Deprecation description `
 6. Both `paramType` and `returnType` can support multiple types by separating with `|`
 7. Currently a description for a tag must remain on the same line as the tag. Multi-line descriptions for tags are not supported at this time.
 
@@ -38,14 +40,14 @@ These are some examples of the documentation scheme described above.
 / Ensures that a string is returned to the caller, regardless of input. Useful for logging. NOTE:
 / Uses 'string' to print symbols, '.Q.s1' for all other types.
 /  @param input (Atom) Any atom to ensure is a string
-/  @returns (String) The string representation of the atom
+/  @return (String) The string representation of the atom
 .util.ensureString:{[input]
 ```
 
 ```
 / Ensures that a symbol is returned to the caller, regardless of input.
 /  @param input (Atom) Any atom to ensure is a symbol
-/  @returns (Symbol) The input as a symbol
+/  @return (Symbol) The input as a symbol
 /  @throws IllegalArgumentException If the input is a table, dictionary or function
 .util.ensureSymbol:{[input]
 ```
