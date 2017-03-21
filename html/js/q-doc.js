@@ -133,7 +133,7 @@ QDoc.postProcessDoc = function(docJson) {
 
         for(var sCount = 0; sCount < element.see.length; sCount++) {
             element.see[sCount] = {
-                func: S(element.see[sCount]).humanize(),
+                func: S(element.see[sCount]),
                 id: QDoc.escapeChars(element.see[sCount])
             };
         }
