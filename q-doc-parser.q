@@ -35,7 +35,11 @@
 .qdoc.parser.tags[enlist"@returns"]:`.qdoc.parser.tag.returns;
 .qdoc.parser.tags[enlist"@throws"]:`.qdoc.parser.tag.throws;
 .qdoc.parser.tags[enlist"@see"]:`.qdoc.parser.tag.see;
+.qdoc.parser.tags[enlist"@deprecated"]:`.qdoc.parser.tag.deprecated;
 
+/ Defines equivalent tags for compatibility.
+.qdoc.parser.eqTags:()!();
+.qdoc.parser.eqTags[enlist"@return"]:enlist"@returns";
 
 / Generates the parse trees for all .q and .k files recursively from the specified folder root.
 /  @param folderRoot Folder The root folder to parse all .q and .k files recursively from
@@ -83,6 +87,7 @@
 
     commentsDict:key[funcAndArgs]!trim over reverse each 1_/:file commentLines;
     commentsDict:trim 1_/:/:commentsDict;
+    commentsDict:{ssr[x;;]. y}\:\:/[commentsDict;flip[(key,value)@\:.qdoc.parser.eqTags],\:\:" "];
 
     tagDiscovery:{ key[.qdoc.parser.tags]!where each like[x;]@/:"*",/:key[.qdoc.parser.tags],\:"*" } each commentsDict;
     tagComments:commentsDict@'tagDiscovery;
@@ -175,7 +180,7 @@
 
     returnSplit:1_" " vs first return;
 
-    :key[rDict]!(.qdoc.parser.typeParser[func;returnSplit 0];" " sv 2_ returnSplit);
+    :key[rDict]!(.qdoc.parser.typeParser[func;returnSplit 0];" " sv 1_ returnSplit);
  };
 
 .qdoc.parser.tag.throws:{[func;throws]
@@ -194,10 +199,18 @@
 
 .qdoc.parser.tag.see:{[func;sees]
     if[()~sees;
-        :enlist`;
+        :0#`;
     ];
 
     :"S"$first each 1_/:" " vs/:sees;
+ };
+
+.qdoc.parser.tag.deprecated:{[func;deprecated]
+    if[()~deprecated;
+        :();
+    ];
+
+    :" "sv/:1_/:" " vs/:deprecated;
  };
 
 .qdoc.parser.typeParser:{[func;types]

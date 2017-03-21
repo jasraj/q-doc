@@ -14,6 +14,13 @@
         <p>{{comments}}</p>
         {{/if}}
 
+        {{#if deprecated}}
+        <p>
+            <strong class="warning">Deprecation:</strong>
+            {{deprecated}}
+        </p>
+        {{/if}}
+
         {{#if param}}
         <p>
             <strong>Parameters:</strong>
@@ -59,6 +66,20 @@
             {{#throws}}
                 <li><tt>{{exception}}</tt> : {{description}}</li>
             {{/throws}}
+        </ul>
+        {{/if}}
+
+        {{#if see}}
+        <p>
+            <strong>See Also:</strong>
+        </p>
+
+        <ul>
+            {{#see}}
+                <li>
+                    <a href="#{{id}}"><tt>{{func}}</tt></a>
+                </li>
+            {{/see}}
         </ul>
         {{/if}}
     </div>
