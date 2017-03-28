@@ -73,7 +73,7 @@
     .log.info "Generating q-doc parse tree for: ",string fileName;
 
     file:read0 fileName;
-    file@:where not in [;(" ";"\t";"}")] first each file;
+	file@:where not in [;(" ";"\t";"}";"\\")] first each file;
 
     funcSignatures:file where not "/"~/:first each file;
     funcAndArgs:{ $[not "{["~2#x; :enlist`; :`$";" vs x where not any x in/:"{[]} "] } each (!). flip ({`$first x};last)@\:/:":" vs/:funcSignatures;

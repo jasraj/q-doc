@@ -46,12 +46,13 @@ QDoc.getFunctionSources = function() {
 //  @see QDoc.fileTree
 //  @see QDoc.fileTreeDiv
 QDoc.buildFileTree = function(json) {
-    var source = QDoc.getHandlebarsTemplate("q-doc-file-tree.handlebars");
+    QDoc.getHandlebarsTemplate("q-doc-file-tree.handlebars",
+		function(source) {
+			QDoc.fileTreeTemplate = Handlebars.compile(source);
+			QDoc.fileTree = QDoc.addElementsForFileTree(json);
 
-    QDoc.fileTreeTemplate = Handlebars.compile(source);
-    QDoc.fileTree = QDoc.addElementsForFileTree(json);
-
-    $("#" + QDoc.fileTreeDiv).html( QDoc.fileTreeTemplate(json) );
+			$("#" + QDoc.fileTreeDiv).html( QDoc.fileTreeTemplate(json) );
+		});
  }
 
 QDoc.addElementsForFileTree = function(filesJson) {
@@ -71,19 +72,24 @@ QDoc.get = function(file) {
     $("#" + QDoc.fileTreeDiv + "-group>a.active").removeClass("active");
     $("#" + QDoc.escapeChars(file)).addClass("active");
 
-    $.getJSON("/jsn?.qdoc.json.getQDocFor`$\"" + file + "\"", {},  QDoc.buildQDoc);
+	var url = "/jsn?.qdoc.json.getQDocFor`$\"" + file + "\"";
+    $.getJSON(url, {},  QDoc.buildQDoc)
+		.fail(function(jq, status, error) {
+			console.error("JSON [" + url + "] " + status + ": " + error);
+		});
  }
 
 // Builds the HTML content page from the handlebars template and the post-processed
 // JSON results
 //  @see QDoc.postProcessDoc
 QDoc.buildQDoc = function(json) {
-    var source = QDoc.getHandlebarsTemplate("q-doc-element.handlebars");
-    var elementTemplate = Handlebars.compile(source);
+    QDoc.getHandlebarsTemplate("q-doc-element.handlebars",
+		function(source) {
+			var elementTemplate = Handlebars.compile(source);
+			var jsonUi = QDoc.postProcessDoc(json);
 
-    var jsonUi = QDoc.postProcessDoc(json);
-
-    $("#" + QDoc.contentDiv).html( elementTemplate(jsonUi) );
+			$("#" + QDoc.contentDiv).html( elementTemplate(jsonUi) );
+		});
  }
 
 
@@ -91,18 +97,18 @@ QDoc.buildQDoc = function(json) {
 
 // Function retrieves the specified template file, synchronously, from the server.
 //  @see QDoc.templatesLoc
-QDoc.getHandlebarsTemplate = function(templateFile) {
-    var theTemplate = null;
-
+QDoc.getHandlebarsTemplate = function(templateFile, callback) {
+	var url = QDoc.templatesLoc + templateFile;
     $.ajax({
-        url: QDoc.templatesLoc + templateFile,
-        async: false,
+        url: url,
+		dataType: "html",
         success: function(template) {
-            theTemplate = template;
-        }
+			callback(template);
+        },
+		error: function(jq, status, error) {
+			console.error("AJAX [" + url + "] " + status + ": " + error);
+		}
     });
-
-    return theTemplate;
  }
 
 // Once we receive the JSON result from the kdb server, we need to clean it up
