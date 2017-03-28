@@ -84,7 +84,7 @@
 
     / Recover namespace for each function
     funcAndArgs:(!). flip(({$[(~).(first;last)@\:y;`;$[y[0]like ".*";::;` sv x,]`$y 0]}@/:namespaces),\:last)@\:'":"vs/:funcSignatures;
-    funcAndArgs:{ $[not "{["~2#x; :enlist`; :`$";" vs x where not any x in/:"{[]} "] } each funcAndArgs;
+    funcAndArgs:{ $[not "{["~2#x; :enlist`$"..."; :`$";" vs x where not any x in/:"{[]} "] } each funcAndArgs;
 
     commentLines:(file?funcSignatures) - til each deltas file?funcSignatures;
    
@@ -107,12 +107,10 @@
     keysToRemove:`,.qdoc.parser.postProcess[funcAndArgs;comments;tagComments];
 
     if[not .util.isEmpty keysToRemove;
-        .log.info "Documented objects to be ignored: ",.Q.s1 keysToRemove;
-
-        funcAndArgs:keysToRemove _ funcAndArgs;
-        comments:keysToRemove _ comments;
-        tagComments:keysToRemove _ tagComments;
-    ];
+        .log.info "Documented objects to be ignored: ",.Q.s1 keysToRemove];
+    funcAndArgs:keysToRemove _ funcAndArgs;
+    comments:keysToRemove _ comments;
+    tagComments:keysToRemove _ tagComments;
 
     tagParseTree:raze .qdoc.parser.parseTags[;tagComments] each key tagComments;
     
