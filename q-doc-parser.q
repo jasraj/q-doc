@@ -73,7 +73,7 @@
     .log.info "Generating q-doc parse tree for: ",string fileName;
 
     file:read0 fileName;
-	file@:where not in [;(" ";"\t";"}";"\\")] first each file;
+    file@:where not in [;" \t}"] first each file;
 
     / Remove block comments
     file:file where null{$[x=`;$[y;`C;z;`E;x];x=`C;$[z;`;x];x]}\[`] . file like/:1#/:"/\\";
