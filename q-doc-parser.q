@@ -75,8 +75,16 @@
     file:read0 fileName;
     file@:where not in [;(" ";"\t";"}")] first each file;
 
-    funcSignatures:file where not "/"~/:first each file;
-    funcAndArgs:{ $[not "{["~2#x; :enlist`; :`$";" vs x where not any x in/:"{[]} "] } each (!). flip ({`$first x};last)@\:/:":" vs/:funcSignatures;
+    / Remove block comments
+    file:file where null{$[x=`;$[y;`C;z;`E;x];x=`C;$[z;`;x];x]}\[`] . file like/:1#/:"/\\";
+    funcSignatures:file where not"/"=first each file;
+    / Get default namespaces
+    namespaceSwitches:funcSignatures like"\\d *";
+    namespaces:fills?[namespaceSwitches;`$2_/:funcSignatures;`];
+
+    / Recover namespace for each function
+    funcAndArgs:(!). flip(({$[(~).(first;last)@\:y;`;$[y[0]like ".*";::;` sv x,]`$y 0]}@/:namespaces),\:last)@\:'":"vs/:funcSignatures;
+    funcAndArgs:{ $[not "{["~2#x; :enlist`$"..."; :`$";" vs x where not any x in/:"{[]} "] } each funcAndArgs;
 
     commentLines:(file?funcSignatures) - til each deltas file?funcSignatures;
    
@@ -87,6 +95,7 @@
 
     commentsDict:key[funcAndArgs]!trim over reverse each 1_/:file commentLines;
     commentsDict:trim 1_/:/:commentsDict;
+    / Translate equivalent tags
     commentsDict:{ssr[x;;]. y}\:\:/[commentsDict;flip[(key,value)@\:.qdoc.parser.eqTags],\:\:" "];
 
     tagDiscovery:{ key[.qdoc.parser.tags]!where each like[x;]@/:"*",/:key[.qdoc.parser.tags],\:"*" } each commentsDict;
@@ -95,15 +104,13 @@
     comments:comments@'where each not "/"~/:/:first@/:/:comments;
     
     / Key of funcAndArgs / comments / tagComments are equal and must remain equal
-    keysToRemove:.qdoc.parser.postProcess[funcAndArgs;comments;tagComments];
+    keysToRemove:`,.qdoc.parser.postProcess[funcAndArgs;comments;tagComments];
 
     if[not .util.isEmpty keysToRemove;
-        .log.info "Documented objects to be ignored: ",.Q.s1 keysToRemove;
-
-        funcAndArgs:keysToRemove _ funcAndArgs;
-        comments:keysToRemove _ comments;
-        tagComments:keysToRemove _ tagComments;
-    ];
+        .log.info "Documented objects to be ignored: ",.Q.s1 keysToRemove];
+    funcAndArgs:keysToRemove _ funcAndArgs;
+    comments:keysToRemove _ comments;
+    tagComments:keysToRemove _ tagComments;
 
     tagParseTree:raze .qdoc.parser.parseTags[;tagComments] each key tagComments;
     
@@ -141,7 +148,10 @@
 /  @returns (SymbolList) Functions that should be removed from the parsed results
 .qdoc.parser.postProcess:{[funcAndArgs;comments;tagComments]
     / Remove documented objects with any function to the left of the assignment
-    assignmentInFunc:key[funcAndArgs] where any each any each string[key funcAndArgs] in/:\:",@_:";
+    k:string key funcAndArgs;
+    assignmentInFunc:key[funcAndArgs] where any each
+        {(x like"*_*")and(not any x like/:"*[A-Za-z]",/:(raze each til[count x]#\:enlist"[0-9A-Za-z]"),\:"_*")}'[k],'
+        (any each k in/:\:",@:");
 
     / Remove additions to dictionaries if no comments
     dictKeysNoComments:{ $[(any any string[x] in/:\:"[]") & (()~y); :x; :` ] }./:flip (key;value)@\:comments;
