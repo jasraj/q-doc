@@ -78,7 +78,13 @@
     / Remove block comments
     file:file where null{$[x=`;$[y;`C;z;`E;x];x=`C;$[z;`;x];x]}\[`] . file like/:1#/:"/\\";
     funcSignatures:file where not"/"=first each file;
-    funcAndArgs:{ $[not "{["~2#x; :enlist`; :`$";" vs x where not any x in/:"{[]} "] } each (!). flip ({`$first x};last)@\:/:":" vs/:funcSignatures;
+    / Get default namespaces
+    namespaceSwitches:funcSignatures like"\\d *";
+    namespaces:fills?[namespaceSwitches;`$2_/:funcSignatures;`];
+
+    / Recover namespace for each function
+    funcAndArgs:(!). flip(({$[(~).(first;last)@\:y;`;$[y[0]like ".*";::;` sv x,]`$y 0]}@/:namespaces),\:last)@\:'":"vs/:funcSignatures;
+    funcAndArgs:{ $[not "{["~2#x; :enlist`; :`$";" vs x where not any x in/:"{[]} "] } each funcAndArgs;
 
     commentLines:(file?funcSignatures) - til each deltas file?funcSignatures;
    
@@ -89,6 +95,7 @@
 
     commentsDict:key[funcAndArgs]!trim over reverse each 1_/:file commentLines;
     commentsDict:trim 1_/:/:commentsDict;
+    / Translate equivalent tags
     commentsDict:{ssr[x;;]. y}\:\:/[commentsDict;flip[(key,value)@\:.qdoc.parser.eqTags],\:\:" "];
 
     tagDiscovery:{ key[.qdoc.parser.tags]!where each like[x;]@/:"*",/:key[.qdoc.parser.tags],\:"*" } each commentsDict;
@@ -97,7 +104,7 @@
     comments:comments@'where each not "/"~/:/:first@/:/:comments;
     
     / Key of funcAndArgs / comments / tagComments are equal and must remain equal
-    keysToRemove:.qdoc.parser.postProcess[funcAndArgs;comments;tagComments];
+    keysToRemove:`,.qdoc.parser.postProcess[funcAndArgs;comments;tagComments];
 
     if[not .util.isEmpty keysToRemove;
         .log.info "Documented objects to be ignored: ",.Q.s1 keysToRemove;
