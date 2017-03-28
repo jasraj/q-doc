@@ -83,10 +83,11 @@
     namespaces:fills?[namespaceSwitches;`$2_/:funcSignatures;`];
 
     / Recover namespace for each function
-    funcAndArgs:(!). flip(({$[(~).(first;last)@\:y;`;$[y[0]like ".*";::;` sv x,]`$y 0]}@/:namespaces),\:last)@\:'":"vs/:funcSignatures;
+    funcAndArgs:(!). flip(({$[(~).(first;last)@\:y;`;$[(null x)or(y[0]like ".*");::;` sv x,]`$y 0]}@/:namespaces),\:last)@\:'":"vs/:funcSignatures;
     funcAndArgs:{ $[not "{["~2#x; :enlist`$"..."; :`$";" vs x where not any x in/:"{[]} "] } each funcAndArgs;
 
-    commentLines:(file?funcSignatures) - til each deltas file?funcSignatures;
+    commentLines:{last[y]+(last[y]_x)?z}[file]\[0;funcSignatures];
+    commentLines:commentLines - til each deltas commentLines;
    
     / Deltas stops at 1 so first line of file gets ignored. If its a comment, manually add to list
     if["/"~first first file;
