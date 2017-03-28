@@ -75,7 +75,9 @@
     file:read0 fileName;
     file@:where not in [;(" ";"\t";"}")] first each file;
 
-    funcSignatures:file where not "/"~/:first each file;
+    / Remove block comments
+    file:file where null{$[x=`;$[y;`C;z;`E;x];x=`C;$[z;`;x];x]}\[`] . file like/:1#/:"/\\";
+    funcSignatures:file where not"/"=first each file;
     funcAndArgs:{ $[not "{["~2#x; :enlist`; :`$";" vs x where not any x in/:"{[]} "] } each (!). flip ({`$first x};last)@\:/:":" vs/:funcSignatures;
 
     commentLines:(file?funcSignatures) - til each deltas file?funcSignatures;
