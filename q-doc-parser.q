@@ -150,7 +150,10 @@
 /  @returns (SymbolList) Functions that should be removed from the parsed results
 .qdoc.parser.postProcess:{[funcAndArgs;comments;tagComments]
     / Remove documented objects with any function to the left of the assignment
-    assignmentInFunc:key[funcAndArgs] where any each any each string[key funcAndArgs] in/:\:",@_:";
+    k:string key funcAndArgs;
+    assignmentInFunc:key[funcAndArgs] where any each
+        {(x like"*_*")and(not any x like/:"*[A-Za-z]",/:(raze each til[count x]#\:enlist"[0-9A-Za-z]"),\:"_*")}'[k],'
+        (any each k in/:\:",@:");
 
     / Remove additions to dictionaries if no comments
     dictKeysNoComments:{ $[(any any string[x] in/:\:"[]") & (()~y); :x; :` ] }./:flip (key;value)@\:comments;
