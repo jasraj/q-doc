@@ -21,13 +21,14 @@ In order to use this documentation generator, your function comments must confir
    * `@param` : Describes the function's input parameters
    * `@return` : Describes the function's return value (alias: `@returns`)
    * `@throws` : Describes each exception that can be thrown by the function (alias: `@exception`)
-   * `@see` : Provides references to other functions that are used within the function
+   * `@see` : Provides references to other functions used within the function or a external resource
    * `@deprecated` : Describes a deprecated feature
 5. Each block-level tag expects a certain set of information to parse correctly.
    * `/  @param paramName (paramType) Param description `
    * `/  @return (returnType) Return description `
    * `/  @throws ExceptionName Exception description `
-   * `/  @see Reference `
+   * `/  @see Reference `, or  
+     `/  @see <a href="url">Description</a> `
    * `/  @deprecated Deprecation description `
 6. Both `paramType` and `returnType` can support multiple types by separating with `|`
 7. The inline tags below are supported by the parser.
