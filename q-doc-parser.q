@@ -278,8 +278,9 @@
     leads:("{@code";"<code>" ;"{@literal";"<tt>" );
     ends: (1#"}"   ;"</code>";1#"}"      ;"</tt>");
     slices:.qdoc.parser.sliceCode[leads;ends;line];
-    slices:@[slices;k where 1=(k:til count slices)mod 4;leads!("<code>" ;"<code>" ;"<tt>" ;"<tt>" )];
-    slices:@[slices;k where 2=(k:til count slices)mod 4;.qdoc.parser.escapeCode];
-    slices:@[slices;k where 3=(k:til count slices)mod 4;ends !("</code>";"</code>";"</tt>";"</tt>")];
+    slices:@[slices;where 1=(til count slices)mod 4;leads!L:("<code>";"<code>";"<tt>";"<tt>")];
+    slices:@[slices;where 2=(til count slices)mod 4;.qdoc.parser.escapeCode trim@];
+    k:where 3=(til count slices)mod 4;
+    slices:@[;k;(ends,'L)!("</code>";"</code>";"</tt>";"</tt>")]@[slices;k;,;slices k-2];
     raze slices
  };
