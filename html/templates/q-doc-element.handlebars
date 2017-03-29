@@ -77,7 +77,11 @@
         <ul>
             {{#each see}}
                 <li>
-                    <a href="#{{id}}"><tt>{{func}}</tt></a>
+                    {{#if id}}
+                        <a href="#{{id}}"><tt>{{linkOrFunc}}</tt></a>
+                    {{else}}
+                        {{{linkOfFunc}}}
+                    {{/if}}
                 </li>
             {{/each}}
         </ul>
