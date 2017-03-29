@@ -26,9 +26,10 @@
 / Stores the folder root where the q-doc parsing started from
 .qdoc.parseTree.root:`;
 
-/ Defines the supported tags to be parsed. The dictionary key is the string that should
-/ be identified from the file and the value is the function that should be executed on
-/ lines that match.
+/ Defines the supported block-level tags to be parsed. The dictionary key is the string that
+/ should be identified from the file and the value is the function that should be executed
+/ on lines that match.
+/ <p>
 / NOTE: Tag comments must reside on the the same line as the tag
 .qdoc.parser.tags:()!();
 .qdoc.parser.tags[enlist"@param"]:`.qdoc.parser.tag.param;
@@ -36,6 +37,15 @@
 .qdoc.parser.tags[enlist"@throws"]:`.qdoc.parser.tag.throws;
 .qdoc.parser.tags[enlist"@see"]:`.qdoc.parser.tag.see;
 .qdoc.parser.tags[enlist"@deprecated"]:`.qdoc.parser.tag.deprecated;
+
+/ Defines supported inline tags to be parsed. The dictionary key is the string that should
+/ be identified from the file and the value is the function that should be executed on
+/ lines that match.
+.qdoc.parser.inlines:()!();
+.qdoc.parser.inlines[enlist"{@code"]:`.qdoc.parser.inline.code;
+.qdoc.parser.inlines[enlist"<code>"]:`.qdoc.parser.inline.codeHtml;
+.qdoc.parser.inlines[enlist"q)"]:`.qdoc.parser.inline.q;
+.qdoc.parser.inlines[enlist"k)"]:`.qdoc.parser.inline.k;
 
 / Defines equivalent tags for compatibility.
 .qdoc.parser.eqTags:()!();
@@ -97,8 +107,12 @@
 
     commentsDict:key[funcAndArgs]!trim over reverse each 1_/:file commentLines;
     commentsDict:trim 1_/:/:commentsDict;
+
     / Translate equivalent tags
     commentsDict:{ssr[x;;]. y}\:\:/[commentsDict;flip[(key,value)@\:.qdoc.parser.eqTags],\:\:" "];
+
+    / Translate inline tags
+    commentsDict:{$[null i:first ss[x;y 0];x;get[y 1][i;x]]}\:\:/[commentsDict;flip(key,value)@\:.qdoc.parser.inlines];
 
     tagDiscovery:{ key[.qdoc.parser.tags]!where each like[x;]@/:"*",/:key[.qdoc.parser.tags],\:"*" } each commentsDict;
     tagComments:commentsDict@'tagDiscovery;
@@ -235,4 +249,26 @@
     :.qdoc.parser.types.output .qdoc.parser.types.input types;
  };
 
+.qdoc.parser.inline.k_q_:{[pfx;c;line]
+    :$[trim[line]like pfx,"*";
+        "<code>",pfx,"</code><tt>",trim[count[pfx]_line],"</tt><br>";
+        line];
+ };
 
+/ Wrap {@code k)...} in {@code <code>k)</code><tt>...</tt><br>}.
+.qdoc.parser.inline.k:.qdoc.parser.inline.k_q_["k)"];
+
+/ Wrap {@code q)...} in {@code <code>q)</code><tt>...</tt><br>}.
+.qdoc.parser.inline.q:.qdoc.parser.inline.k_q_["q)"];
+
+/ Replace <code>{@code [^}]*}</code> with <code><tt>[^}]*</tt></code>.
+.qdoc.parser.inline.code:{[c;line]
+    strs:(count[line]^0,(c+0,count["{@code"]),c+((c _line)?"}")+0 1)_line;
+    :strs[0],"<tt>",trim[strs 2],"</tt>",strs 4;
+ };
+
+/ Replace {@code &lt;code>...</code>} with {@code <tt>...</tt>}.
+.qdoc.parser.inline.codeHtml:{[c;line]
+    strs:(count[line]^0,(c+0,count["<code>"]),c+(first ss[c _line;"</code>"])+0,count["</code>"])_line;
+    :strs[0],"<tt>",strs[2],"</tt>",strs 4;
+ };
