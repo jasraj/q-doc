@@ -19,8 +19,8 @@ In order to use this documentation generator, your function comments must confir
 3. A description of the function must be the first part of the comment body. It can span 1 or more lines
 4. The tags below are supported by the parser. All are optional.
    * `@param` : Describes the function's input parameters
-   * `@return` : Describes the function's return value
-   * `@throws` : Describes each exception that can be thrown by the function
+   * `@return` : Describes the function's return value (alias: `@returns`)
+   * `@throws` : Describes each exception that can be thrown by the function (alias: `@exception`)
    * `@see` : Provides references to other functions that are used within the function
    * `@deprecated` : Describes a deprecated feature
 5. Each tag expects a certain set of information to parse correctly.
@@ -30,7 +30,8 @@ In order to use this documentation generator, your function comments must confir
    * `/  @see Reference `
    * `/  @deprecated Deprecation description `
 6. Both `paramType` and `returnType` can support multiple types by separating with `|`
-7. Currently a description for a tag must remain on the same line as the tag. Multi-line descriptions for tags are not supported at this time.
+7. Function and tag descriptions can contain simple HTML contents.
+8. Currently a description for a tag must remain on the same line as the tag. Multi-line descriptions for tags are not supported at this time.
 
 #### Examples
 
@@ -77,8 +78,8 @@ It requires a kdb process to be running and listening on a port in order for peo
 #### Running q-doc
 
 1. `q /path/to/q-doc.q -p 0W`
-2. `.qdoc.parser.init ``:/path/to/code/to/parse`
-3. Browse to http://localhost:port/index-kdb.html
+2. ``.qdoc.parser.init `:/path/to/code/to/parse``
+3. Browse to `http://localhost:port/index-kdb.html`
 
 ```
 c:\Temp\q-doc-master>c:\jas_apps\q\w32\q.exe q-doc.q -p 0W
@@ -108,7 +109,6 @@ INFO: Generating q-doc parse tree for: :./q-doc.q
 INFO: Generating q-doc parse tree for: :./util.q
 q)
 ```
-
 
 
 [![Analytics](https://ga-beacon.appspot.com/UA-54104883-5/q-doc/README)](https://github.com/jasraj/q-doc)
