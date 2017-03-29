@@ -11,13 +11,13 @@
 
     <div class="panel-body">
         {{#if comments}}
-        <p>{{comments}}</p>
+        <p>{{{comments}}}</p>
         {{/if}}
 
         {{#if deprecated}}
         <p>
             <strong class="warning">Deprecation:</strong>
-            {{deprecated}}
+            {{{deprecated}}}
         </p>
         {{/if}}
 
@@ -27,16 +27,16 @@
         </p>
 
         <ul style="list-style-type: none">
-            {{#param}}
+            {{#each param}}
                 <li>
                     <tt>{{name}}</tt> : <em>{{types}}</em>
                     {{#if description}}
                     <ul>
-                        <li>{{description}}</li>
+                        <li>{{{description}}}</li>
                     </ul>
                     {{/if}}
                 </li>
-            {{/param}}
+            {{/each}}
         </ul>
         {{/if}}
 
@@ -50,7 +50,7 @@
                 <em>{{returns.types}}</em>
                 {{#if returns.description}}
                 <ul> 
-                    <li>{{returns.description}}</li>
+                    <li>{{{returns.description}}}</li>
                 </ul>
                 {{/if}}
             </li>
@@ -63,9 +63,9 @@
         </p>
 
         <ul style="list-style-type: none">
-            {{#throws}}
-                <li><tt>{{exception}}</tt> : {{description}}</li>
-            {{/throws}}
+            {{#each throws}}
+                <li><tt>{{exception}}</tt> : {{{description}}}</li>
+            {{/each}}
         </ul>
         {{/if}}
 
@@ -75,11 +75,11 @@
         </p>
 
         <ul>
-            {{#see}}
+            {{#each see}}
                 <li>
                     <a href="#{{id}}"><tt>{{func}}</tt></a>
                 </li>
-            {{/see}}
+            {{/each}}
         </ul>
         {{/if}}
     </div>

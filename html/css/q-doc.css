@@ -19,3 +19,8 @@ body {
 .warning {
   color: darkRed;
 }
+
+.filename {
+  font-size: small;
+  font-weight: bold;
+}
