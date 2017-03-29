@@ -42,8 +42,7 @@
 / be identified from the file and the value is the function that should be executed on
 / lines that match.
 .qdoc.parser.inlines:()!();
-.qdoc.parser.inlines[enlist"{@code"]:`.qdoc.parser.inline.code;
-.qdoc.parser.inlines[enlist"<code>"]:`.qdoc.parser.inline.codeHtml;
+.qdoc.parser.inlines[("{@code";"<code>")]:`.qdoc.parser.inline.code;
 .qdoc.parser.inlines[enlist"q)"]:`.qdoc.parser.inline.q;
 .qdoc.parser.inlines[enlist"k)"]:`.qdoc.parser.inline.k;
 
@@ -112,7 +111,7 @@
     commentsDict:{ssr[x;;]. y}\:\:/[commentsDict;flip[(key,value)@\:.qdoc.parser.eqTags],\:\:" "];
 
     / Translate inline tags
-    commentsDict:{$[null i:first ss[x;y 0];x;get[y 1][i;x]]}\:\:/[commentsDict;flip(key,value)@\:.qdoc.parser.inlines];
+    commentsDict:{$[any x like/:"*",/:y[0],\:"*";get y 1;::]x}\:\:/[commentsDict;flip(value,key)@\:group .qdoc.parser.inlines];
 
     tagDiscovery:{ key[.qdoc.parser.tags]!where each like[x;]@/:"*",/:key[.qdoc.parser.tags],\:"*" } each commentsDict;
     tagComments:commentsDict@'tagDiscovery;
@@ -249,26 +248,40 @@
     :.qdoc.parser.types.output .qdoc.parser.types.input types;
  };
 
-.qdoc.parser.inline.k_q_:{[pfx;c;line]
+.qdoc.parser.escapeCode:{[line]
+    ssr/[line;"&<>";("&amp;";"&lt;";"&gt;")]
+ };
+
+.qdoc.parser.inline.k_q_:{[pfx;line]
     :$[trim[line]like pfx,"*";
-        "<code>",pfx,"</code><tt>",trim[count[pfx]_line],"</tt><br>";
+        "<tt>",pfx,"</tt><code>",.qdoc.parser.escapeCode[trim count[pfx]_line],"</code><br>";
         line];
  };
 
-/ Wrap {@code k)...} in {@code <code>k)</code><tt>...</tt><br>}.
+/ Wrap {@code k)...} in {@code <tt>k)</tt><code>...</code><br>}.
 .qdoc.parser.inline.k:.qdoc.parser.inline.k_q_["k)"];
 
-/ Wrap {@code q)...} in {@code <code>q)</code><tt>...</tt><br>}.
+/ Wrap {@code q)...} in {@code <tt>q)</tt><code>...</code><br>}.
 .qdoc.parser.inline.q:.qdoc.parser.inline.k_q_["q)"];
 
-/ Replace <code>{@code [^}]*}</code> with <code><tt>[^}]*</tt></code>.
-.qdoc.parser.inline.code:{[c;line]
-    strs:(count[line]^0,(c+0,count["{@code"]),c+((c _line)?"}")+0 1)_line;
-    :strs[0],"<tt>",trim[strs 2],"</tt>",strs 4;
+.qdoc.parser.sliceCode:{[leads;ends;line]
+    b:min raze ss/:[line;leads];
+    if[0W=b;:enlist line];
+    pi:first where(b _line)like/:leads,\:"*";
+    e:count[line]^x+first ss[(x:b+count leads pi)_line;ends pi];
+    slices:(0,(b+0,count leads pi),min'[count[line],/:e+0,count ends pi])cut line;
+    :(-1_slices),.z.s[leads;ends;last slices];
  };
 
-/ Replace {@code &lt;code>...</code>} with {@code <tt>...</tt>}.
-.qdoc.parser.inline.codeHtml:{[c;line]
-    strs:(count[line]^0,(c+0,count["<code>"]),c+(first ss[c _line;"</code>"])+0,count["</code>"])_line;
-    :strs[0],"<tt>",strs[2],"</tt>",strs 4;
+/ Replace <code>{@code [^}]*}</code> with escape sequence
+/ @param line (String) Replace <code>{@code [^}]*}</code> with escape sequence
+/ @returns (String) Replace <code>{@code [^}]*}</code> with escape sequence
+/ @throws line (String) Replace <code>{@code [^}]*}</code> with escape sequence
+/ @deprecated line (String) Replace <code>{@code [^}]*}</code> with escape sequence
+.qdoc.parser.inline.code:{[line]
+    slices:.qdoc.parser.sliceCode[("{@code";"<code>");("}";"</code>")]line;
+    slices:@[slices;k;:;count[k:k where 1=(k:til count slices)mod 4]#enlist"<code>"];
+    slices:@[slices;k;:;count[k:k where 3=(k:til count slices)mod 4]#enlist"</code>"];
+    slices:@[slices;k where 2=(k:til count slices)mod 4;.qdoc.parser.escapeCode];
+    raze slices
  };
