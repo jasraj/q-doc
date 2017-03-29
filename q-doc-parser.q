@@ -40,6 +40,7 @@
 / Defines equivalent tags for compatibility.
 .qdoc.parser.eqTags:()!();
 .qdoc.parser.eqTags[enlist"@return"]:enlist"@returns";
+.qdoc.parser.eqTags[enlist"@exception"]:enlist"@throws";
 
 / Generates the parse trees for all .q and .k files recursively from the specified folder root.
 /  @param folderRoot Folder The root folder to parse all .q and .k files recursively from
