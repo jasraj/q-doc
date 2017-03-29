@@ -32,6 +32,7 @@ In order to use this documentation generator, your function comments must confir
 6. Both `paramType` and `returnType` can support multiple types by separating with `|`
 7. The inline tags below are supported by the parser.
    * `{@code ...}` : Format a one-liner as code (alias: `<code>...</code>`)
+   * `{@literal ...}` : Format a one-liner as literal (alias: `<tt>...</tt>`)
    * `q) ...` : Must occur at beginning of a comment line. Format till the end of line as q code
    * `k) ...` : Must occur at beginning of a comment line. Format till the end of line as k code
 8. Function and tag descriptions can contain simple HTML contents.

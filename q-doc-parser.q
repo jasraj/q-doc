@@ -42,7 +42,7 @@
 / be identified from the file and the value is the function that should be executed on
 / lines that match.
 .qdoc.parser.inlines:()!();
-.qdoc.parser.inlines[("{@code";"<code>")]:`.qdoc.parser.inline.code;
+.qdoc.parser.inlines[("{@code";"<code>";"{@literal";"<tt>")]:`.qdoc.parser.inline.code;
 .qdoc.parser.inlines[enlist"q)"]:`.qdoc.parser.inline.q;
 .qdoc.parser.inlines[enlist"k)"]:`.qdoc.parser.inline.k;
 
@@ -274,14 +274,12 @@
  };
 
 / Replace <code>{@code [^}]*}</code> with escape sequence
-/ @param line (String) Replace <code>{@code [^}]*}</code> with escape sequence
-/ @returns (String) Replace <code>{@code [^}]*}</code> with escape sequence
-/ @throws line (String) Replace <code>{@code [^}]*}</code> with escape sequence
-/ @deprecated line (String) Replace <code>{@code [^}]*}</code> with escape sequence
 .qdoc.parser.inline.code:{[line]
-    slices:.qdoc.parser.sliceCode[("{@code";"<code>");("}";"</code>")]line;
-    slices:@[slices;k;:;count[k:k where 1=(k:til count slices)mod 4]#enlist"<code>"];
-    slices:@[slices;k;:;count[k:k where 3=(k:til count slices)mod 4]#enlist"</code>"];
+    leads:("{@code";"<code>" ;"{@literal";"<tt>" );
+    ends: (1#"}"   ;"</code>";1#"}"      ;"</tt>");
+    slices:.qdoc.parser.sliceCode[leads;ends;line];
+    slices:@[slices;k where 1=(k:til count slices)mod 4;leads!("<code>" ;"<code>" ;"<tt>" ;"<tt>" )];
     slices:@[slices;k where 2=(k:til count slices)mod 4;.qdoc.parser.escapeCode];
+    slices:@[slices;k where 3=(k:til count slices)mod 4;ends !("</code>";"</code>";"</tt>";"</tt>")];
     raze slices
  };
