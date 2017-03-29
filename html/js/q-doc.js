@@ -139,7 +139,7 @@ QDoc.postProcessDoc = function(docJson) {
 
         for(var sCount = 0; sCount < element.see.length; sCount++) {
             element.see[sCount] = {
-                linkOfFunc: element.see[sCount],
+                linkOrFunc: element.see[sCount],
                 id: /^\s*<a[^>]+>[^<]+<\/a>\s*$/.test(element.see[sCount])
                         ? null : QDoc.escapeChars(element.see[sCount])
             };
