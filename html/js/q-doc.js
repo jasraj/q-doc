@@ -84,6 +84,8 @@ QDoc.buildQDoc = function(json) {
     var jsonUi = QDoc.postProcessDoc(json);
 
     $("#" + QDoc.contentDiv).html( elementTemplate(jsonUi) );
+    
+    window.scrollTo(0, 0);
  }
 
 
