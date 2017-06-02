@@ -19,3 +19,12 @@ body {
 .warning {
   color: darkRed;
 }
+
+.center {
+    text-align: center;
+}
+
+
+#q-doc-file-tree {
+    word-wrap: break-word;
+}
