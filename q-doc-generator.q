@@ -9,7 +9,7 @@
     files:distinct value .qdoc.parseTree.source;
     funcCount:{ count where .qdoc.parseTree.source~\:x } each files;
 
-    :enlist[`files]!enlist { `file`funcCount!(x;y) }./:flip (files;funcCount);
+    :enlist[`files]!enlist `file xasc flip `file`funcCount!(files;funcCount);
  };
 
 / Gets the parse tree for the specified file returned in a format ready for converting to JSON.
