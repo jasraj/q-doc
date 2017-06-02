@@ -76,6 +76,12 @@
     file@:where not in [;(" ";"\t";"}")] first each file;
 
     funcSignatures:file where not "/"~/:first each file;
+    
+    if[0 = count funcSignatures;
+        .log.info "Empty file. Nothing to do [ File: ",string[fileName]," ]";
+        :(::);
+    ];
+    
     funcAndArgs:{ $[not "{["~2#x; :enlist`; :`$";" vs x where not any x in/:"{[]} "] } each (!). flip ({`$first x};last)@\:/:":" vs/:funcSignatures;
 
     commentLines:(file?funcSignatures) - til each deltas file?funcSignatures;
