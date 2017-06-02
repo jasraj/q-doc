@@ -88,6 +88,12 @@
     / Remove block comments
     file:file where null{$[x=`;$[y;`C;z;`E;x];x=`C;$[z;`;x];x]}\[`] . file like/:1#/:"/\\";
     funcSignatures:file where not"/"=first each file;
+    
+    if[0 = count funcSignatures;
+        .log.info "Empty file. Nothing to do [ File: ",string[fileName]," ]";
+        :(::);
+    ];
+    
     / Get default namespaces
     namespaceSwitches:funcSignatures like"\\d *";
     namespaces:fills?[namespaceSwitches;`$2_/:funcSignatures;`];

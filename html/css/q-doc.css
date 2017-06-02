@@ -29,3 +29,12 @@ code + code {	/*cancel out previous padding*/
   margin-left: -4px;
   padding-left: 0;
 }
+
+.center {
+    text-align: center;
+}
+
+
+#q-doc-file-tree {
+    word-wrap: break-word;
+}
