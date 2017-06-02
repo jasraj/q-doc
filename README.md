@@ -17,20 +17,27 @@ In order to use this documentation generator, your function comments must confir
    * All comments within functions will be *ignored*.
 2. All q-doc comment lines should be start with a single forward slash ("/").
 3. A description of the function must be the first part of the comment body. It can span 1 or more lines
-4. The tags below are supported by the parser. All are optional.
+4. The block-level tags below are supported by the parser. All are optional.
    * `@param` : Describes the function's input parameters
-   * `@return` : Describes the function's return value
-   * `@throws` : Describes each exception that can be thrown by the function
-   * `@see` : Provides references to other functions that are used within the function
+   * `@return` : Describes the function's return value (alias: `@returns`)
+   * `@throws` : Describes each exception that can be thrown by the function (alias: `@exception`)
+   * `@see` : Provides references to other functions used within the function or a external resource
    * `@deprecated` : Describes a deprecated feature
-5. Each tag expects a certain set of information to parse correctly.
+5. Each block-level tag expects a certain set of information to parse correctly.
    * `/  @param paramName (paramType) Param description `
    * `/  @return (returnType) Return description `
    * `/  @throws ExceptionName Exception description `
-   * `/  @see Reference `
+   * `/  @see Reference `, or  
+     `/  @see <a href="url">Description</a> `
    * `/  @deprecated Deprecation description `
 6. Both `paramType` and `returnType` can support multiple types by separating with `|`
-7. Currently a description for a tag must remain on the same line as the tag. Multi-line descriptions for tags are not supported at this time.
+7. The inline tags below are supported by the parser.
+   * `{@code ...}` : Format a one-liner as code (alias: `<code>...</code>`)
+   * `{@literal ...}` : Format a one-liner as literal (alias: `<tt>...</tt>`)
+   * `q) ...` : Must occur at beginning of a comment line. Format till the end of line as q code
+   * `k) ...` : Must occur at beginning of a comment line. Format till the end of line as k code
+8. Function and tag descriptions can contain simple HTML contents.
+9. Currently a description for a tag must remain on the same line as the tag. Multi-line descriptions for tags are not supported at this time.
 
 #### Examples
 
@@ -77,8 +84,8 @@ It requires a kdb process to be running and listening on a port in order for peo
 #### Running q-doc
 
 1. `q /path/to/q-doc.q -p 0W`
-2. `.qdoc.parser.init ``:/path/to/code/to/parse`
-3. Browse to http://localhost:port/index-kdb.html
+2. ``.qdoc.parser.init `:/path/to/code/to/parse``
+3. Browse to `http://localhost:port/index-kdb.html`
 
 ```
 c:\Temp\q-doc-master>c:\jas_apps\q\w32\q.exe q-doc.q -p 0W
@@ -108,7 +115,6 @@ INFO: Generating q-doc parse tree for: :./q-doc.q
 INFO: Generating q-doc parse tree for: :./util.q
 q)
 ```
-
 
 
 [![Analytics](https://ga-beacon.appspot.com/UA-54104883-5/q-doc/README)](https://github.com/jasraj/q-doc)

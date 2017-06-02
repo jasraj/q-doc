@@ -4,11 +4,11 @@
 {{!-- License BSD, see LICENSE for details --}}
 
 <div class="list-group" id="q-doc-file-tree-group">
-{{#files}}
+{{#each files}}
     <a href="{{link}}" id="{{id}}" class="list-group-item">
+        <tt class="filename">{{file}}</tt>
         <span class="badge">{{funcCount}}</span>
-        <tt><small><strong>{{file}}</strong></small></tt>
     </a>
-{{/files}}
+{{/each}}
 </div>
 

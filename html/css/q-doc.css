@@ -20,6 +20,16 @@ body {
   color: darkRed;
 }
 
+.filename {
+  font-size: small;
+  font-weight: bold;
+}
+
+code + code {	/*cancel out previous padding*/
+  margin-left: -4px;
+  padding-left: 0;
+}
+
 .center {
     text-align: center;
 }
