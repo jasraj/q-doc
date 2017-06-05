@@ -12,7 +12,7 @@
 
 	-1 "*****";
 	-1 "q-doc Code Documentation Generator";
-	-1 "Copyright (C) 2014 - 2015 Jaskirat M.S. Rajasansir";
+	-1 "Copyright (C) 2014 - 2017 Jaskirat M.S. Rajasansir";
 	-1 "License BSD, see LICENSE for details";
 	-1 "*****\n";
 

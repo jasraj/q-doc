@@ -23,8 +23,8 @@
 / Stores function arguments, keyed by the function name
 .qdoc.parseTree.arguments:(!)."S*"$\:();
 
-/ Stores the folder root where the q-doc parsing started from
-.qdoc.parseTree.root:`;
+/ Stores the folder roots where the q-doc parsing started from
+.qdoc.parseTree.roots:`;
 
 / Defines the supported block-level tags to be parsed. The dictionary key is the string that
 / should be identified from the file and the value is the function that should be executed
@@ -52,31 +52,58 @@
 .qdoc.parser.eqTags[enlist"@exception"]:enlist"@throws";
 
 / Generates the parse trees for all .q and .k files recursively from the specified folder root.
-/  @param folderRoot Folder The root folder to parse all .q and .k files recursively from
+/  @param folderRoot (Folder|FolderList) The root folder to parse all .q and .k files recursively from
 /  @throws FolderDoesNotExistException If the specified folder does not exist
 /  @see .util.isFolder
 /  @see .qdoc.parser.parse
-.qdoc.parser.init:{[folderRoot]
-    if[not .util.isFolder folderRoot;
-        .log.error "Folder does not exist! [ Folder: ",string[folderRoot]," ]";
-        '"FolderDoesNotExistException (",string[folderRoot],")";
+.qdoc.parser.init:{[folderRoots]
+    if[-11h = type folderRoots;
+        folderRoots:enlist folderRoots;
     ];
 
-    .qdoc.parseTree.root:folderRoot;
+    folderRoots:distinct folderRoots;
 
-    files:.util.tree folderRoot;
-    files@:where any files like/:("*.q";"*.k");
-    files:hsym each `symbol$files;
+    if[any foldersCheck:not .util.isFolder each folderRoots;
+        .log.error "One or more specified folders does not exist on disk";
+        .log.error " Folders: ",.Q.s1 folderRoots where foldersCheck;
+        '"FolderDoesNotExistException";
+    ];
 
-    .qdoc.parser.parse each files;
+    .qdoc.parseTree.roots:folderRoots;
 
-    / Post-processing, make file names relative to folder root for better UI display
-    .qdoc.parseTree.source:hsym each `$ssr[;,[;"/"] string folderRoot;""] each string .qdoc.parseTree.source;
+    files:folderRoots!.util.tree each folderRoots;
+    files:{ x where any x like/:("*.q";"*.k") } each files;
+
+    .qdoc.parser.parse each raze files;
+
+    .qdoc.parser.removeFileNameRoots[];
+ };
+
+/ Calculates the unique root of all the folders specified and removes it from all the discovered files path for 
+/ better UI display
+.qdoc.parser.removeFileNameRoots:{
+    pathSplits:"/" vs/:string .qdoc.parseTree.roots;
+    uniquePath:{[pathSplits;index] $[1 = count dp:distinct pathSplits@\:index; :first dp; :""] } [pathSplits;] each til max count each pathSplits;
+    uniquePath@:where not ""~/:uniquePath;
+    uniquePath:("/" sv uniquePath),"/";
+    shortRootPaths:ssr[;uniquePath;""]@/:string .qdoc.parseTree.roots;
+
+    paths:(enlist each string .qdoc.parseTree.roots),'enlist each shortRootPaths;
+
+    .qdoc.parseTree.source:{
+
+        theRoot:first x where y like/:(x@\:0),\:"*";
+        / Remove complete root and re-append short root
+        :hsym `$theRoot[1],ssr[y;theRoot 0;""];
+
+    }[paths;] each string .qdoc.parseTree.source;
+
+
  };
 
 / Generates the parse tree for the specified file.
-/  @param fileName File The file to parse for q-doc
-/  @returns Boolean True if the parse was successful
+/  @param fileName (File) The file to parse for q-doc
+/  @returns (Boolean) True if the parse was successful
 /  @see .qdoc.parseTree.parseTags
 /  @see .qdoc.parser.postProcess
 .qdoc.parser.parse:{[fileName]
@@ -144,8 +171,8 @@
  };
 
 / Extracts and parses the supported tags from the q-doc body.
-/  @param func Symbol The function name the documentation is currently being parsed for
-/  @param tagsAndComments Dict The dictionary of function name and comments split by tag name
+/  @param func (Symbol) The function name the documentation is currently being parsed for
+/  @param tagsAndComments (Dict) The dictionary of function name and comments split by tag name
 .qdoc.parser.parseTags:{[func;tagsAndComments]
     parseDict:key[.qdoc.parser.tags]!(count[.qdoc.parser.tags]#"*")$\:();
 
