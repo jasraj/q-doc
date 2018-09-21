@@ -59,7 +59,7 @@
 
     .require.lib each `$("q-doc-config"; "q-doc-generator"; "q-doc-parser");
 
-	.h.HTML:1_ string .qdoc.cfg.folderRoot;
+	.h.HTML:1_ string ` sv .qdoc.cfg.folderRoot,`html;
 	.h.tx[`jsn]:{ enlist .j.j x };
 	.h.ty[`jsn]:"application/json";
  };
