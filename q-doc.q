@@ -1,67 +1,74 @@
 // q-doc Code Documentation Generator
 //  Initialisation
-// Copyright (C) 2014 Jaskirat M.S. Rajasansir
+// Copyright (C) 2014 - 2018 Jaskirat M.S. Rajasansir
 // License BSD, see LICENSE for details
 
-/ The root folder that the q-doc functionality resides in. This will be set on boot.
-/  @see .qdoc.init
-.qdoc.cfg.baseFolder:`;
 
-.qdoc.init:{
+/ The root folder of the q-doc library
+.qdoc.cfg.folderRoot:`;
+
+/ The arguments passed into the process. This defines how the q-doc generator should be initialised
+.qdoc.cfg.args:()!();
+
+/ The core libraries that should be loaded from kdb-common prior to loading the q-doc library itself
+.qdoc.cfg.coreLibraries:`util`file;
+
+
+/ Initialisation function when the q-doc system is started directly on the command line (without any
+/ pre-existing kdb-common interfaces present)
+/  @see .qdoc.init
+.qdoc.standaloneInit:{
 	system "c 100 500";
 
 	-1 "*****";
 	-1 "q-doc Code Documentation Generator";
-	-1 "Copyright (C) 2014 - 2017 Jaskirat M.S. Rajasansir";
+	-1 "Copyright (C) 2014 - 2018 Jas Rajasansir";
 	-1 "License BSD, see LICENSE for details";
 	-1 "*****\n";
 
-	.qdoc.cfg.baseFolder:.qdoc.getCwd[];
+    .qdoc.cfg.folderRoot:first ` vs hsym .z.f;
 
-	system "l util.q";
+    requirePath:` sv .qdoc.cfg.folderRoot,(`$"kdb-common"),`src`require.q;
+
+    system "l ",1_ string requirePath;
+    .require.init .qdoc.cfg.folderRoot;
 
     if[not `j in key`;
-        .qdoc.require `json;
+        .require.lib `json;
     ];
 
-	.qdoc.require `$"q-doc-config";
-	.qdoc.require `$"q-doc-generator";
-	.qdoc.require `$"q-doc-parser";
+    .require.lib each .qdoc.cfg.coreLibraries;
 
-	.h.HTML:"html";
+    .qdoc.init[];
+
+    $[.util.isListening[];
+        .log.info "Process is listening on port ",string system "p";
+        .log.warn "This process is not bound to any port. Please restart the process with the '-p' flag or use '\\p'."
+    ];
+
+    -1 "\nTo initialise the parser, run .qdoc.parser.init `:/path/to/code/folder/root\n";
+ };
+
+/ Initialisation function of just the q-doc system itself, assuming that all requisite libraries are loaded
+/ and ready for use
+/  @throws NoQDocFolderRootException If the q-doc folder root has not been set when this function is called
+.qdoc.init:{
+    if[null .qdoc.cfg.folderRoot;
+        '"NoQDocFolderRootException";
+    ];
+
+    .require.lib each `$("q-doc-config"; "q-doc-generator"; "q-doc-parser");
+
+	.h.HTML:1_ string .qdoc.cfg.folderRoot;
 	.h.tx[`jsn]:{ enlist .j.j x };
 	.h.ty[`jsn]:"application/json";
-
-	$[.util.isListening[];
-		.log.info "Process is listening on port ",string system "p";
-		.log.warn "This process is not bound to any port. Please restart the process with the '-p' flag or use '\\p'."
-	];
-
-	-1 "";
-	.log.info "To initialise the parser, run .qdoc.parser.init `:/path/to/code/folder/root\n";
- };
-
-/ Get the current working directory, dependent on the Operating System the process is started on.
-/ NOTE: Only Windows and Linux are currently supported.
-/  @returns (FolderPath) The current working directory
-/  @throws GetCwdNotImplementedException If the operating system is not yet supported
-.qdoc.getCwd:{
-	if["w"~first string .z.o;
-		:hsym first `$trim system "echo %cd%";
-	];
-
-	if["l"~first string .z.o;
-		:hsym first `$trim system "pwd";
-	];
-
-	'"GetCwdNotImplementedException (",string[.z.o],")";
- };
-
-/ Simple wrapper around .util.require to load the specified library from the current working directory
-/  @param lib (Symbol) The library to load
-.qdoc.require:{[lib]
-	:.util.require[lib;.qdoc.cfg.baseFolder];
  };
 
 
-.qdoc.init[];
+// Standalone process initialisation
+
+.qdoc.cfg.args:first each .Q.opt .z.x;
+
+if[`standalone in key .qdoc.cfg.args;
+    .qdoc.standaloneInit[];
+ ];
