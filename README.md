@@ -91,7 +91,7 @@ git clone --recursive https://github.com/jasraj/q-doc.git
 
 #### Running q-doc
 
-1. `q /path/to/q-doc.q -p 0W`
+1. `q /path/to/q-doc.q -p 0W -standalone`
 2. ``.qdoc.parser.init `:/path/to/code/to/parse``
 3. Browse to `http://localhost:port/index-kdb.html`
 
