@@ -75,6 +75,14 @@ The `q-doc` parser supplied within this repository, generates documentation on i
 
 It requires a kdb process to be running and listening on a port in order for people to view the generated documentation.
 
+#### Cloning the Repository
+
+If you clone this repository, ensure that you specify the `--recursive` command to `git clone` to ensure that the kdb-common subodule gets automatically cloned and initialised:
+
+```
+git clone --recursive https://github.com/jasraj/q-doc.git
+```
+
 #### Prerequisites
 
 1. kdb+ running on Windows or Linux
