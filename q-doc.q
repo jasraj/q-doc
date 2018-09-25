@@ -47,6 +47,8 @@
     ];
 
     -1 "\nTo initialise the parser, run .qdoc.parser.init `:/path/to/code/folder/root\n";
+    -1 "After running the parser, browse to http://",string[.z.h],":",string[system "p"],"/index-kdb.html to view the generated documentation\n";
+
  };
 
 / Initialisation function of just the q-doc system itself, assuming that all requisite libraries are loaded

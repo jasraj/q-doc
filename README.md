@@ -88,7 +88,7 @@ It requires a kdb process to be running and listening on a port in order for peo
 3. Browse to `http://localhost:port/index-kdb.html`
 
 ```
-c:\Temp\q-doc-master>c:\jas_apps\q\w32\q.exe q-doc.q -p 0W
+c:\Temp\q-doc-master>c:\jas_apps\q\w32\q.exe q-doc.q -p 0W -standalone
 KDB+ 3.1 2014.05.03 Copyright (C) 1993-2014 Kx Systems
 w32/ 12()core 4095MB jrajasansir jase6230 192.168.1.14 NONEXPIRE
 
