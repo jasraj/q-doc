@@ -1,6 +1,6 @@
 // q-doc Code Documentation Generator
 //   Configuration
-// Copyright (C) 2014 Jaskirat M.S. Rajasansir
+// Copyright (C) 2014 - 2018 Jaskirat Rajasansir
 // License BSD, see LICENSE for details
 
 

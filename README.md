@@ -102,7 +102,7 @@ w32/ 12()core 4095MB jrajasansir jase6230 192.168.1.14 NONEXPIRE
 
 *****
 q-doc Code Documentation Generator
-Copyright (C) 2014 Jaskirat M.S. Rajasansir
+Copyright (C) 2014 - 2018 Jaskirat Rajasansir
 License BSD, see LICENSE for details
 *****
 

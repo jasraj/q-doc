@@ -1,6 +1,6 @@
 // q-doc Code Documentation Generator
 //  JSON Generator
-// Copyright (C) 2014 Jaskirat M.S. Rajasansir
+// Copyright (C) 2014 - 2018 Jaskirat Rajasansir
 // License BSD, see LICENSE for details
 
 / Gets all the files that have been parsed by the q-doc system and the number of documented entries per file
