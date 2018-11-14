@@ -21,6 +21,9 @@ QDoc.contentDiv = "q-doc-parsed-content";
 // Relative folder location of the handlebar templates
 QDoc.templatesLoc = "templates/";
 
+// The key value to search for in the URL hash to perform a load of a file on init
+QDoc.checkHashOnInit = "doc";
+
 // File tree contents set on load
 //  @see QDoc.buildFileTree
 QDoc.fileTree = null;
@@ -29,11 +32,24 @@ QDoc.fileTree = null;
 // if file tree has to change
 QDoc.fileTreeTemplate = null;
 
+// If non-empty, this value contains the file that was specified in the URL hash when the page
+// was loaded
+//  @see QDoc.parseUrlHash
+QDoc.fileSetOnInit = "";
+
 
 QDoc.init = function() {
+    QDoc.fileSetOnInit = QDoc.parseUrlHash();
+
     QDoc.getHeaderDetails();
     QDoc.getFunctionSources();
+
+    if(QDoc.fileSetOnInit != "")
+        QDoc.getWithHistory(QDoc.fileSetOnInit);
+
+    window.onpopstate = QDoc.onPopState;
  }
+
 
 // Function executed when the pages is loaded to get header (company / application name) from kdb
 //  @see QDoc.buildHeader
@@ -72,23 +88,19 @@ QDoc.addElementsForFileTree = function(filesJson) {
     filesJson.files = $.map(filesJson.files, function(item) {
         return $.extend(item, {
             id: QDoc.escapeChars(item.file),
-            link: "javascript:QDoc.get(\"" + item.file + "\")"
+            link: "javascript:QDoc.getWithHistory(\"" + item.file + "\")"
         });
     });
     return filesJson;
  }
 
-// Entry point for retrieving the documentation for a new file
-//  @see QDoc.buildQDoc
-QDoc.get = function(file) {
-    $("#" + QDoc.fileTreeDiv + "-group>a.active").removeClass("active");
-    $("#" + QDoc.escapeChars(file)).addClass("active");
+// Primary point for retrieving the documentation for a new file. This function also updates the browser history
+// to ensure forward and backward tracking
+//  @see QDoc.getNoHistory
+QDoc.getWithHistory = function(file) {
+    QDoc.get(file);
 
-    var url = "/jsn?.qdoc.json.getQDocFor`$\"" + file + "\"";
-    $.getJSON(url, {},  QDoc.buildQDoc)
-        .fail(function(jq, status, error) {
-            console.error("JSON [" + url + "] " + status + ": " + error);
-        });
+    history.pushState(null, null, "#doc=" + file);
  }
 
 // Builds the HTML content page from the handlebars template and the post-processed
@@ -124,6 +136,26 @@ QDoc.getHandlebarsTemplate = function(templateFile, callback) {
         }
     });
  }
+
+// Queries the kdb process for the specified file and updates the HTML page with the result set
+//  @see QDoc.fileTreeDiv
+//  @see QDoc.escapeChars
+//  @see QDoc.buildQDoc
+QDoc.get = function(file) {
+    if(file == "") {
+        console.log("No file specified. Cannot get q-doc for empty file");
+        return;
+    };
+
+    $("#" + QDoc.fileTreeDiv + "-group>a.active").removeClass("active");
+    $("#" + QDoc.escapeChars(file)).addClass("active");
+
+    var url = "/jsn?.qdoc.json.getQDocFor`$\"" + file + "\"";
+    $.getJSON(url, {},  QDoc.buildQDoc)
+        .fail(function(jq, status, error) {
+            console.error("JSON [" + url + "] " + status + ": " + error);
+        });
+ };
 
 // Once we receive the JSON result from the kdb server, we need to clean it up
 // before we can display to the user. This includes:
@@ -176,5 +208,38 @@ QDoc.postProcessDoc = function(docJson) {
 // the non-supported characters are replaced with an underscore "_"
 QDoc.escapeChars = function(fileName) {
     return fileName.replace(/[:/.]/g, "_");
- }
+ };
 
+// Parses the URL hash (anything after the '#') looking for the specified key to enable loading of a specific
+// documentation page as the page loads
+//  @see window.location.hash
+//  @see QDoc.checkHashOnInit
+//  @see QDoc.fileSetOnInit
+QDoc.parseUrlHash = function() {
+    var hashString = window.location.hash.substr(1);
+
+    if(hashString == "")
+        return;
+
+    var ampSplit = hashString.split("&");
+    var fileOnInit = "";
+
+    for(var i = 0; i < ampSplit.length; i++) {
+        var eqSplit = ampSplit[i].split("=");
+
+        if(eqSplit.length == 2 && eqSplit[0] == QDoc.checkHashOnInit) {
+            fileOnInit = eqSplit[1];
+            break;
+        };
+    };
+
+    return fileOnInit;
+ };
+
+// Event handler function for the window.onpopstate event to enable loading the correct file on forward and back
+// navigation in the browser. NOTE: This function calls QDoc.get directly to ensure the history is not changed
+//  @see QDoc.parseUrlHash
+//  @see QDoc.get
+QDoc.onPopState = function(event) {
+    QDoc.get(QDoc.parseUrlHash());
+ };
