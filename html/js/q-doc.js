@@ -44,7 +44,7 @@ QDoc.init = function() {
     QDoc.getHeaderDetails();
     QDoc.getFunctionSources();
 
-    if(QDoc.fileSetOnInit != "")
+    if(!S(QDoc.fileSetOnInit).isEmpty())
         QDoc.getWithHistory(QDoc.fileSetOnInit);
 
     window.onpopstate = QDoc.onPopState;
