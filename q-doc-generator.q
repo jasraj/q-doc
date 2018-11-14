@@ -60,3 +60,8 @@
 
     :dict,enlist[`ERROR]!enlist msg;
  };
+
+/  @returns (Dict) The company and application name for use in the HTML page
+.qdoc.json.getHeaderDetails:{
+    :`company`appName!.qdoc.cfg`companyNameStr`appNameStr;
+ };

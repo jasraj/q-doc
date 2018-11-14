@@ -13,6 +13,12 @@
 / The core libraries that should be loaded from kdb-common prior to loading the q-doc library itself
 .qdoc.cfg.coreLibraries:`util`file;
 
+/ A string to define the company using the q-doc application. Used on the HTML page
+.qdoc.cfg.companyNameStr:"Company";
+
+/ A string to define the application that the q-doc has been generated for. Used on the HTML page
+.qdoc.cfg.appNameStr:"Application Name";
+
 
 / Initialisation function when the q-doc system is started directly on the command line (without any
 / pre-existing kdb-common interfaces present)

@@ -31,13 +31,26 @@ QDoc.fileTreeTemplate = null;
 
 
 QDoc.init = function() {
+    QDoc.getHeaderDetails();
     QDoc.getFunctionSources();
+ }
+
+// Function executed when the pages is loaded to get header (company / application name) from kdb
+//  @see QDoc.buildHeader
+QDoc.getHeaderDetails = function() {
+    $.getJSON("/jsn?.qdoc.json.getHeaderDetails[]", {}, QDoc.buildHeader);
  }
 
 // Function executed when the page is loaded to get all the files in scope for q-doc parsing.
 //  @see QDoc.buildFileTree
 QDoc.getFunctionSources = function() {
     $.getJSON("/jsn?.qdoc.json.getFileList[]", {}, QDoc.buildFileTree);
+ }
+
+// Sets the company and application name on the HTML page once loaded
+QDoc.buildHeader = function(json) {
+    $("#q-doc-header-company").html(json.company);
+    $("#q-doc-header-app-name").html(json.appName);
  }
 
 // Builds the file tree view based on the returned JSON and the related handlebars templated.
