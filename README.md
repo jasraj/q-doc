@@ -9,7 +9,7 @@ The commenting method, along with the associated parser, is known as `q-doc`.
 
 ### Documenting Code
 
-In order to use this documentation generator, your function comments must confirm to the schema defined in this section.
+In order to use this documentation generator, your function comments must conform to the schema defined in this section.
 
 #### Method
 
